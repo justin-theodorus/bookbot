@@ -1,37 +1,42 @@
+import sys
+from stats import count_word
 
+def count_letter(contents):
+    count = {}
+    for c in contents:
+        c = c.lower()
+        if c.isalpha():  
+            count[c] = count.get(c, 0) + 1
+    return count
 
-# ./github.com/justin-theodorus/bookbot/books/frankenstein.txt
 
 def main():
-    with open("books/frankenstein.txt") as f:
-        file_contents = f.read()
-        #print(file_contents)
+    #  1. Check for correct number of CLI arguments
+    if len(sys.argv) != 2:
+        print("Usage: python3 main.py <path_to_book>")
+        sys.exit(1)  # exit with error
 
-        def count_word(contents):
-            count = contents.split()
-            return len(count)
-        def count_letter(contents):
-            count = {}
-            #words = contents.split()
-            
-            for c in contents:
-                if c.lower() not in count:
-                    count[c.lower()] = 1
-                else:
-                    count[c.lower()] += 1
-            #print(count[' '])
-            return count
+    # 2. Get the file path from sys.argv
+    file_path = sys.argv[1]
 
+    # 3. Read the book file
+    try:
+        with open(file_path) as f:
+            file_contents = f.read()
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.")
+        sys.exit(1)
 
-        #print(count_letter(str(file_contents)))
-        print("--- Begin report of books/frankenstein.txt ---")
-        print(f"{count_word(str(file_contents))} words found in the document")
-        print()
-        count = count_letter(file_contents)
-        for c in count:
-            if c.isalpha():
-                print(f"The '{c}' character was found {count[c]} times")
+    # 4. Do the analysis and print the report
+    print(f"--- Begin report of {file_path} ---")
+    print(f"{count_word(file_contents)} words found in the document")
+    print()
+    
+    count = count_letter(file_contents)
+    
+    for c in sorted(count):
+        if c.isalpha():
+            print(f"{c}: {count[c]}")
 
-
-main()
-
+if __name__ == "__main__":
+    main()
